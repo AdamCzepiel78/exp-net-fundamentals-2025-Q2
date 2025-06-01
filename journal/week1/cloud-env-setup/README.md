@@ -1,6 +1,6 @@
 ## Cloud Environment Setup
 
-### In AWS I created the following setup
+In AWS I created the following setup as basic setup for our bootcamp
 
 * VPC in Region Frankfurt
     * VPC Subnet CIDR 10.200.150.0/24
@@ -14,6 +14,6 @@
     * Allow All Traffic from Subnet 10.200.150.0/24
 * 3 Network Interfaces for Private Subnet 10.200.150.128/28#
 * 3 Virtual Machines (all vms got a second nic from private subnet)
-    * Windows Server Test
-    * Red Hat Server Test 
-    * Ubuntu Server Test
+    * Windows Server Test (Nic public and private subnet)
+    * Red Hat Server Test (Nic public and private subnet)
+    * Ubuntu Server Test (Nic public and private subnet)
