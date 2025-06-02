@@ -1,0 +1,424 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS Infrastructure with VPC, Security Groups, and Multi-OS EC2 Instances
+
+Parameters:
+  KeyPairName:
+    Description: Name of an existing EC2 KeyPair to enable SSH/RDP access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: nw-bootcamp-key-endeavour
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair in eu-central-1
+
+  MyIPAddress:
+    Description: 'Your IP address for SSH/RDP access (format: x.x.x.x/32)'
+    Type: String
+    Default: 2.243.79.140/32
+    AllowedPattern: ^([0-9]{1,3}\.){3}[0-9]{1,3}/32$
+    ConstraintDescription: Must be a valid IP address in CIDR format (x.x.x.x/32)
+
+  # AMI Parameters using Systems Manager Parameter Store for latest AMIs
+  LatestRedHatAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+    Description: Latest Amazon Linux 2 AMI (Red Hat-like)
+
+  LatestUbuntuAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id
+    Description: Latest Ubuntu 24.04 AMI
+
+  LatestWindowsAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2022-English-Full-Base
+    Description: Latest Windows Server 2022 AMI (2025 will be updated when available)
+
+Resources:
+  # VPC Configuration
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.200.150.0/24
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: MultiOS-VPC
+
+  # Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MultiOS-IGW
+
+  # Attach Internet Gateway to VPC
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # Public Subnet
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.200.150.0/28
+      AvailabilityZone: eu-central-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Public-Subnet
+
+  # Private Subnet
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.200.150.128/28
+      AvailabilityZone: eu-central-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: Private-Subnet
+
+  # Public Route Table
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Public-RouteTable
+
+  # Public Route to Internet Gateway
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  # Associate Public Subnet with Public Route Table
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Private Route Table
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Private-RouteTable
+
+  # Associate Private Subnet with Private Route Table
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+
+  # Security Group
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Multi-OS Infrastructure
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIPAddress
+          Description: SSH access from My IP
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: !Ref MyIPAddress
+          Description: RDP access from My IP
+        - IpProtocol: '-1'
+          CidrIp: 10.200.150.0/24
+          Description: All traffic within VPC subnet
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          CidrIp: 0.0.0.0/0
+          Description: All outbound traffic
+      Tags:
+        - Key: Name
+          Value: MultiOS-SecurityGroup
+
+  # Elastic IPs for Public Access
+  RedHatEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachGateway
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: RedHat-EIP
+
+  UbuntuEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachGateway
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: Ubuntu-EIP
+
+  WindowsEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachGateway
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: Windows-EIP
+
+  # Primary Network Interfaces for Public Subnet
+  RedHatPrimaryInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: RedHat-Primary-ENI
+
+  UbuntuPrimaryInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: Ubuntu-Primary-ENI
+
+  WindowsPrimaryInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: Windows-Primary-ENI
+
+  # Associate Elastic IPs with Primary Interfaces
+  RedHatEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt RedHatEIP.AllocationId
+      NetworkInterfaceId: !Ref RedHatPrimaryInterface
+
+  UbuntuEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt UbuntuEIP.AllocationId
+      NetworkInterfaceId: !Ref UbuntuPrimaryInterface
+
+  WindowsEIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt WindowsEIP.AllocationId
+      NetworkInterfaceId: !Ref WindowsPrimaryInterface
+
+  # Additional Network Interfaces for Private Subnet
+  RedHatNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: RedHat-Secondary-ENI
+
+  UbuntuNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: Ubuntu-Secondary-ENI
+
+  WindowsNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      GroupSet:
+        - !Ref SecurityGroup
+      Tags:
+        - Key: Name
+          Value: Windows-Secondary-ENI
+
+  # RedHat EC2 Instance (using Amazon Linux 2)
+  RedHatInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestRedHatAmiId
+      InstanceType: t2.medium
+      KeyName: !Ref KeyPairName
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref RedHatPrimaryInterface
+          DeviceIndex: '0'
+        - NetworkInterfaceId: !Ref RedHatNetworkInterface
+          DeviceIndex: '1'
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp3
+            VolumeSize: 30
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: RedHat-Server
+        - Key: OS
+          Value: RHEL-like
+
+  # Ubuntu EC2 Instance
+  UbuntuInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestUbuntuAmiId
+      InstanceType: t2.medium
+      KeyName: !Ref KeyPairName
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref UbuntuPrimaryInterface
+          DeviceIndex: '0'
+        - NetworkInterfaceId: !Ref UbuntuNetworkInterface
+          DeviceIndex: '1'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp3
+            VolumeSize: 30
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: Ubuntu-Server
+        - Key: OS
+          Value: Ubuntu
+
+  # Windows Server EC2 Instance
+  WindowsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestWindowsAmiId
+      InstanceType: t3.large
+      KeyName: !Ref KeyPairName
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref WindowsPrimaryInterface
+          DeviceIndex: '0'
+        - NetworkInterfaceId: !Ref WindowsNetworkInterface
+          DeviceIndex: '1'
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeType: gp3
+            VolumeSize: 30
+            DeleteOnTermination: true
+      Tags:
+        - Key: Name
+          Value: Windows-Server-2022
+        - Key: OS
+          Value: Windows
+
+Outputs:
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${AWS::StackName}-VPC-ID
+
+  PublicSubnetId:
+    Description: Public Subnet ID
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Sub ${AWS::StackName}-PublicSubnet-ID
+
+  PrivateSubnetId:
+    Description: Private Subnet ID
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: !Sub ${AWS::StackName}-PrivateSubnet-ID
+
+  SecurityGroupId:
+    Description: Security Group ID
+    Value: !Ref SecurityGroup
+    Export:
+      Name: !Sub ${AWS::StackName}-SecurityGroup-ID
+
+  RedHatInstanceId:
+    Description: RedHat Instance ID
+    Value: !Ref RedHatInstance
+
+  RedHatPublicIP:
+    Description: RedHat Instance Public IP (Elastic IP)
+    Value: !Ref RedHatEIP
+
+  RedHatPrivateIP:
+    Description: RedHat Instance Primary Private IP
+    Value: !GetAtt RedHatPrimaryInterface.PrimaryPrivateIpAddress
+
+  RedHatSecondaryPrivateIP:
+    Description: RedHat Secondary Private IP
+    Value: !GetAtt RedHatNetworkInterface.PrimaryPrivateIpAddress
+
+  UbuntuInstanceId:
+    Description: Ubuntu Instance ID
+    Value: !Ref UbuntuInstance
+
+  UbuntuPublicIP:
+    Description: Ubuntu Instance Public IP (Elastic IP)
+    Value: !Ref UbuntuEIP
+
+  UbuntuPrivateIP:
+    Description: Ubuntu Instance Primary Private IP
+    Value: !GetAtt UbuntuPrimaryInterface.PrimaryPrivateIpAddress
+
+  UbuntuSecondaryPrivateIP:
+    Description: Ubuntu Secondary Private IP
+    Value: !GetAtt UbuntuNetworkInterface.PrimaryPrivateIpAddress
+
+  WindowsInstanceId:
+    Description: Windows Instance ID
+    Value: !Ref WindowsInstance
+
+  WindowsPublicIP:
+    Description: Windows Instance Public IP (Elastic IP)
+    Value: !Ref WindowsEIP
+
+  WindowsPrivateIP:
+    Description: Windows Instance Primary Private IP
+    Value: !GetAtt WindowsPrimaryInterface.PrimaryPrivateIpAddress
+
+  WindowsSecondaryPrivateIP:
+    Description: Windows Secondary Private IP
+    Value: !GetAtt WindowsNetworkInterface.PrimaryPrivateIpAddress
+
+  SSHCommandRedHat:
+    Description: SSH Command for RedHat
+    Value: !Sub ssh -i ${KeyPairName}.pem ec2-user@${RedHatEIP}
+
+  SSHCommandUbuntu:
+    Description: SSH Command for Ubuntu
+    Value: !Sub ssh -i ${KeyPairName}.pem ubuntu@${UbuntuEIP}
+
+  RDPCommandWindows:
+    Description: RDP Connection for Windows
+    Value: !Sub mstsc /v:${WindowsEIP}
+
+  ImportantNote:
+    Description: Network Configuration
+    Value: 'Each VM has: 1) Primary interface (public subnet + Elastic IP) for
+      internet access, 2) Secondary interface (private subnet) for internal
+      communication'
