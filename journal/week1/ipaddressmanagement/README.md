@@ -4,9 +4,10 @@
 [Back to Main](../../README.md)
 
 * We will cover in this part:
-    * Windows Address Management 
-    * Red Hat Address Management
-    * Ubuntu Address Management 
+    * [Windows Address Management](#windows-server-2025)
+    * [Red Hat Address Management]()
+    * [Ubuntu Address Management](#ubuntu-server)
+    * [Install Virtual Microsoft Server machine into azure with Iac like bicep / arm or terraform](../../../projects/ipaddressmanagement-azure/Journal.md)
 
 
 ## Windows Server 2025
@@ -354,3 +355,8 @@ ubuntu@ip-10-200-150-8:~$ sudo netplan status
            Routes: 10.200.150.128/28 from 10.200.150.141 (link)
                    fe80::/64 metric 256 
 ```
+
+## Red Hat Address Management
+todo:
+
+
