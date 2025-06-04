@@ -8,7 +8,7 @@ AZURE_BIN_DIR := ./ipaddressmanagement-azure/azure-iac
 
 deployaws: ## Deploy the CloudFormation stack
 	chmod +x $(AWS_BIN_DIR)/deploy-stack.sh
-	cd $(BIN_DIR) && ./deploy-stack.sh
+	cd $(AWS_BIN_DIR) && ./deploy-stack.sh
 
 deleteaws: ## Delete the CloudFormation stack
 	chmod +x $(AWS_BIN_DIR)/delete-stack.sh
