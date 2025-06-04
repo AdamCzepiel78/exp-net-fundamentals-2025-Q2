@@ -4,7 +4,7 @@ REGION := eu-central-1
 AWS_BIN_DIR := ./iac-cloud-setup/bin
 AZURE_BIN_DIR := ./ipaddressmanagement-azure/azure-iac
 
-.PHONY: deployaws deleteaws statusaws
+.PHONY: deployaws deleteaws statusaws deleteazure deployazure
 
 deployaws: ## Deploy the CloudFormation stack
 	chmod +x $(AWS_BIN_DIR)/deploy-stack.sh
