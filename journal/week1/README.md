@@ -8,3 +8,4 @@
 * [Infrastructure as Code AWS Environment Deployment](./iac-cloud-setup/README.md)
 * [IP Address Management](./ipaddressmanagement/README.md)
 * [Cisco Packettracer](../../projects/packettracer/journal.md)
+* [Windows Networking](../../projects/windows-networking/journal.md)
