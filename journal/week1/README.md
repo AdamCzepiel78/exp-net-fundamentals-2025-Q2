@@ -10,3 +10,4 @@
 * [Cisco Packettracer](../../projects/packettracer/journal.md)
 * [Windows Networking](../../projects/windows-networking/journal.md)
 * [Windows Firewall Rules](../../projects/windows-firewall-rules/journal.md)
+* [Linux Networking](../../projects/linux-networking/journal.md)

@@ -1,7 +1,6 @@
 ## Cisco Packet Tracer 
 
 [Back to Week 1 Overview](../../journal/week1/README.md)<br/>
-[Back to IP Address Management Journal](../../journal/week1/ipaddressmanagement/README.md)
 
 In this chapter we explored the cisco packate tracer.
 
