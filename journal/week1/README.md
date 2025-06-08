@@ -11,3 +11,4 @@
 * [Windows Networking](../../projects/windows-networking/journal.md)
 * [Windows Firewall Rules](../../projects/windows-firewall-rules/journal.md)
 * [Linux Networking](../../projects/linux-networking/journal.md)
+* [Linux Networking Firewall Iptables](../../projects/linux-networking-firewall/README.md)

@@ -46,8 +46,7 @@ Existent Firewall blocks server
 
 ![](without-firewall.png)
 
-With new firewall rule 
+With new firewall rule
 
 ![](firewall.png)
 ![](website.png)
-

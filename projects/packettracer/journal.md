@@ -67,7 +67,7 @@ Server configuration includes:
 
 ## Network Details
 
-**Network:** 192.168.0.0/24  
+**Network:** 192.168.0.0/24
 **Broadcast:** 192.168.0.255  
 **Available Host Range:** 192.168.0.1 - 192.168.0.254
 
