@@ -3,4 +3,5 @@
 [Back to Main](../README.md)
 
 ### Contents 
-* [Cisco Modeling Labs]()
+* [Cisco Modeling Labs](../../projects/cisco-modeling-labs/journal.md)
+* [VPN with Cisco Modeling Labs]()
