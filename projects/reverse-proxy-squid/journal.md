@@ -1,5 +1,8 @@
 ## Reverse Proxy
 
+[Back to Week 2 Overview](../../journal/week1/README.md)<br/>
+
+
 Our training goes on. Our next challenge is to setup a reverse proxy imn this case squid to forward traffic from proxy to a webserver. 
 I decided to use docker compose for this challenge with a squid and a nginx container. 
 The squid config and the index.html should be mounted.

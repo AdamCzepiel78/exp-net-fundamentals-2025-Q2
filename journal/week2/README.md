@@ -8,7 +8,7 @@
 * [Trafficflow with Wireshark]()
 * [NAT Basics]()
 * [Load Balancer Overview]()
-* [Reverse Proxy]()
+* [Reverse Proxy](../../projects/reverse-proxy-squid/journal.md)
 * [Forward Proxy]()
 * [HA Proxy]()
 * [Create an Azure Virtual Network - Validator]()
