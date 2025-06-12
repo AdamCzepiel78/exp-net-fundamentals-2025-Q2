@@ -1,0 +1,2 @@
+1749699388.251      1 172.21.0.1 TCP_MISS/200 815 GET http://localhost/ - FIRSTUP_PARENT/172.20.0.2 text/html
+1749699388.293      0 172.21.0.1 TCP_MISS_ABORTED/000 0 GET http://localhost/favicon.ico - FIRSTUP_PARENT/172.20.0.2 -
