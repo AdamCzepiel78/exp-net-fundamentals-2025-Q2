@@ -25,7 +25,7 @@ My goal was it to mount the squid.conf and the nginx.conf as file into the relat
 
 ### Outcomes 
 
-With a little help of ai it works excellent. 
+With a little help of ai squid config works excellent. 
 
 ```bash
 # Minimal Squid Reverse Proxy Configuration
@@ -46,4 +46,15 @@ http_access allow all
 
 # Cache Peer Access
 cache_peer_access nginx allow all
+
+### docker result 
+[aczepiel@endeavour reverse-proxy-squid]$ docker ps 
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                                                              NAMES
+ef6c6555c3d7   ubuntu/squid:latest    "entrypoint.sh -f /e…"   32 seconds ago   Up 30 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:3128->3128/tcp, [::]:3128->3128/tcp   squid-proxy
+80aff63e7624   nginx:alpine           "/docker-entrypoint.…"   3 hours ago      Up 30 seconds              
+
 ```
+
+### Result Webesite 
+
+![](./website.png)

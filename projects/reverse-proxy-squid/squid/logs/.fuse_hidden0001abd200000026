@@ -72,3 +72,10 @@
 2025/06/12 03:36:26 pinger| ICMPv6 socket opened
 2025/06/12 03:36:27| storeLateRelease: released 0 objects
 2025/06/12 03:36:28| temporary disabling (Not Found) digest from nginx
+2025/06/12 03:41:28| temporary disabling (Not Found) digest from nginx
+2025/06/12 03:51:28| temporary disabling (Not Found) digest from nginx
+2025/06/12 04:11:28| temporary disabling (Not Found) digest from nginx
+2025/06/12 04:35:41| Logfile: opening log stdio:/var/spool/squid/netdb.state
+2025/06/12 04:35:41| Logfile: closing log stdio:/var/spool/squid/netdb.state
+2025/06/12 04:35:41| NETDB state saved; 2 entries, 0 msec
+2025/06/12 04:51:28| temporary disabling (Not Found) digest from nginx
