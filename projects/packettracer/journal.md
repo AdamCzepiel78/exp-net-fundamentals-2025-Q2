@@ -1,6 +1,8 @@
 ## Cisco Packet Tracer 
 
 [Back to Week 1 Overview](../../journal/week1/README.md)<br/>
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 In this chapter we explored the cisco packate tracer.
 

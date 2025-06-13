@@ -2,6 +2,8 @@
 
 
 [Back to Week 2 Overview](../../journal/week2/README.md)<br/>
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 What we want to do. We want to install CML2 in a hypervisor solution and set up a simple Cisco networking environment. It is recommended to use VMware Workstation.
 

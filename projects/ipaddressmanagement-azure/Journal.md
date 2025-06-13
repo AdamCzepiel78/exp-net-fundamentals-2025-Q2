@@ -2,6 +2,8 @@
 
 [Back to Week 1 Overview](../../journal/week1/README.md)<br/>
 [Back to IP Address Management Journal](../../journal/week1/ipaddressmanagement/README.md)
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 At the beginning of this task i was looking for an easy solution to solve it. As azure can export the arm template after creating a vm i decided to create iac with arm templates.
 I deployed the vm in azure and i downloaded the resource templates.

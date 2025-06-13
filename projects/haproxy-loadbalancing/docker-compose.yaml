@@ -1,0 +1,37 @@
+services:
+  haproxy:
+    image: haproxy:2.8
+    container_name: haproxy-lb
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - webserver1
+      - webserver2
+    networks:
+      - web-network
+
+  # Webserver 1
+  webserver1:
+    image: nginx:alpine
+    container_name: webserver1
+    volumes:
+      - ./webserver1/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./webserver1/index.html:/usr/share/nginx/html/index.html:ro
+    networks:
+      - web-network
+
+  # Webserver 2
+  webserver2:
+    image: nginx:alpine
+    container_name: webserver2
+    volumes:
+      - ./webserver2/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./webserver2/index.html:/usr/share/nginx/html/index.html:ro
+    networks:
+      - web-network
+
+networks:
+  web-network:
+    driver: bridge

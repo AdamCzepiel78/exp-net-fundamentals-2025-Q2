@@ -1,6 +1,8 @@
 ## Windows Networking 
 
-[Back to Week 1 Overview](../../journal/week1/README.md)<br/>
+[Back to Week 2 Overview](../../journal/week2/README.md)<br/>
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 ## AWS Environment 
 

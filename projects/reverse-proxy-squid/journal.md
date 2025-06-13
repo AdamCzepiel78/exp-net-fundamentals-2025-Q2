@@ -1,6 +1,8 @@
 ## Reverse Proxy
 
 [Back to Week 2 Overview](../../journal/week2/README.md)<br/>
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 
 Our training goes on. Our next challenge is to setup a reverse proxy imn this case squid to forward traffic from proxy to a webserver. 

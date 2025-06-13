@@ -1,6 +1,8 @@
 ### Squid Forward Proxy
 
 [Back to Week 2 Overview](../../journal/week2/README.md)<br/>
+[Back to Journal](../../journal/README.md)<br/>
+[Back to Main](../../README.md)
 
 Today we are going to build in forward proxy system in aws with two servers, the first server is a squid proxy, the second server is a windows proxy client.the proxy should forward traffic to the windows proxy client
 This is the diagram of the structure.
