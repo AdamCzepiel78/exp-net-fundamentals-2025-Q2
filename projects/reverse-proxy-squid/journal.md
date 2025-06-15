@@ -4,14 +4,11 @@
 [Back to Journal](../../journal/README.md)<br/>
 [Back to Main](../../README.md)
 
+### Goal 
 
 Our training goes on. Our next challenge is to setup a reverse proxy imn this case squid to forward traffic from proxy to a webserver. 
 I decided to use docker compose for this challenge with a squid and a nginx container. 
 The squid config and the index.html should be mounted.
-
-
-### Goal 
-
 We want to see how easy or difficult it is to setup squid proxy as reverse proxy with a webserver as target.
 
 ### Considerations 
@@ -22,6 +19,7 @@ we want to find an easy solution so i decided to use Docker as main technology
 
 * squid container image exists 
 * nginx container image exists 
+* docker is installed 
 
 My goal was it to mount the squid.conf and the nginx.conf as file into the related containers.
 
